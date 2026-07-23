@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "name": "truckber-frontend",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "@truckber_api_url",
+    "VITE_SOCKET_URL": "@truckber_socket_url"
+  }
+}

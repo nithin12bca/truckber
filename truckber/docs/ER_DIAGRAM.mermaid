@@ -1,0 +1,199 @@
+erDiagram
+    USER {
+        ObjectId _id PK
+        string name
+        string email UK
+        string phone UK
+        string password
+        enum role
+        string avatar
+        boolean isActive
+        boolean isEmailVerified
+        string refreshToken
+        object address
+        date lastLogin
+        date createdAt
+    }
+
+    DRIVER {
+        ObjectId _id PK
+        ObjectId user FK
+        ObjectId owner FK
+        string licenseNumber UK
+        date licenseExpiry
+        string licenseImage
+        string aadhaarNumber UK
+        string aadhaarImage
+        number experience
+        ObjectId assignedTruck FK
+        enum verificationStatus
+        boolean isAvailable
+        object currentLocation
+        number totalTrips
+        number totalDistance
+        number rating
+        number totalRatings
+        object bankDetails
+    }
+
+    TRUCK {
+        ObjectId _id PK
+        ObjectId owner FK
+        string truckNumber UK
+        enum truckType
+        number capacity
+        string make
+        string model
+        number year
+        string registrationNumber
+        date registrationExpiry
+        string insuranceNumber
+        date insuranceExpiry
+        string fitnessCertNumber
+        date fitnessCertExpiry
+        enum status
+        ObjectId assignedDriver FK
+        number pricePerKm
+        number minimumCharge
+        number totalTrips
+        number totalDistance
+    }
+
+    BOOKING {
+        ObjectId _id PK
+        string bookingNumber UK
+        ObjectId customer FK
+        ObjectId truckOwner FK
+        ObjectId driver FK
+        ObjectId truck FK
+        object pickup
+        object drop
+        number distance
+        enum truckType
+        number loadWeight
+        string loadDescription
+        date scheduledPickup
+        date actualPickup
+        date actualDelivery
+        number estimatedCost
+        number finalCost
+        enum status
+        object proofOfDelivery
+        boolean isLivestockTransport
+        object livestockDetails
+        date createdAt
+    }
+
+    PAYMENT {
+        ObjectId _id PK
+        ObjectId booking FK
+        ObjectId customer FK
+        ObjectId truckOwner FK
+        string transactionId UK
+        number amount
+        number platformFee
+        number ownerAmount
+        string currency
+        enum paymentMethod
+        enum status
+        date paidAt
+        boolean invoiceGenerated
+        string invoiceUrl
+    }
+
+    INVOICE {
+        ObjectId _id PK
+        string invoiceNumber UK
+        ObjectId booking FK
+        ObjectId payment FK
+        ObjectId customer FK
+        ObjectId truckOwner FK
+        array items
+        number subtotal
+        number tax
+        number total
+        string pdfUrl
+        date issuedAt
+        enum status
+    }
+
+    NOTIFICATION {
+        ObjectId _id PK
+        ObjectId recipient FK
+        enum type
+        string title
+        string message
+        mixed data
+        boolean isRead
+        ObjectId booking FK
+        date createdAt
+    }
+
+    REVIEW {
+        ObjectId _id PK
+        ObjectId booking FK
+        ObjectId customer FK
+        ObjectId driver FK
+        number rating
+        string comment
+        array tags
+        date createdAt
+    }
+
+    MAINTENANCE {
+        ObjectId _id PK
+        ObjectId truck FK
+        ObjectId owner FK
+        enum serviceType
+        date serviceDate
+        date nextServiceDate
+        number serviceCost
+        string serviceCenter
+        number odometer
+        string notes
+        enum status
+    }
+
+    LOCATION_HISTORY {
+        ObjectId _id PK
+        ObjectId booking FK
+        ObjectId driver FK
+        ObjectId truck FK
+        array coordinates
+        number totalDistance
+        date createdAt
+    }
+
+    LIVESTOCK_BATCH {
+        ObjectId _id PK
+        ObjectId booking FK
+        ObjectId owner FK
+        string animalType
+        string breed
+        number quantity
+        number totalWeight
+        string origin
+        string destination
+        string healthCertificateNumber
+        array vaccinationRecords
+        array feedRecords
+        array mortalityRecords
+        array transportExpenses
+        enum status
+        date deliveredAt
+    }
+
+    USER ||--o{ BOOKING : "places"
+    USER ||--o{ TRUCK : "owns"
+    USER ||--|| DRIVER : "has profile"
+    TRUCK ||--o{ BOOKING : "assigned to"
+    DRIVER ||--o{ BOOKING : "handles"
+    BOOKING ||--|| PAYMENT : "generates"
+    BOOKING ||--|| INVOICE : "has"
+    BOOKING ||--o{ LOCATION_HISTORY : "tracks"
+    BOOKING ||--o{ NOTIFICATION : "triggers"
+    BOOKING ||--o| REVIEW : "receives"
+    BOOKING ||--o| LIVESTOCK_BATCH : "may carry"
+    TRUCK ||--o{ MAINTENANCE : "has records"
+    DRIVER ||--|| TRUCK : "assigned to"
+    USER ||--o{ NOTIFICATION : "receives"
